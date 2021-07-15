@@ -1,0 +1,31 @@
+{
+    "manifest_version": 2,
+    "name": "Fancyground",
+    "version": "0.9.0",
+    "description": "Custom arrows and square highlights for lichess.org.",
+    "author": "Albert Ford",
+    "homepage_url": "https://example.org/",
+    "permissions": ["storage"],
+    "icons": {
+        "48": "icons/icon@48.png",
+        "96": "icons/icon@96.png",
+        "128": "icons/icon@128.png"
+    },
+    "content_scripts": [
+        {
+            "matches": ["https://lichess.org/*"],
+            "js": ["bundled/index.js"],
+            "css": ["static/index.css"]
+        }
+    ],
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "fancyground@albertford.com"
+        }
+    },
+    "options_ui": {
+        "browser_style": true,
+        "chrome_style": true,
+        "page": "static/options.html"
+    }
+}

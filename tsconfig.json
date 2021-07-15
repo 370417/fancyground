@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "noImplicitAny": true,
+        "lib": ["ES2018", "DOM"],
+        "outDir": "js",
+        "moduleResolution": "node",
+        "module": "es6"
+    },
+    "include": ["src/"]
+}

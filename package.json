@@ -1,0 +1,22 @@
+{
+  "name": "fancyground",
+  "version": "0.9.0",
+  "description": "Custom arrows and square highlights for lichess.org.",
+  "keywords": ["chess", "lichess"],
+  "browser": "index.ts",
+  "scripts": {
+    "build": "tsc; rollup -c"
+  },
+  "author": "Albert Ford <albert@albertford.com>",
+  "license": "GPL-3.0-or-later",
+  "repository": "github:370417/fancyground",
+  "dependencies": {
+    "webextension-polyfill-ts": "^0.26.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^19.0.1",
+    "@rollup/plugin-node-resolve": "^13.0.2",
+    "rollup": "^2.53.2",
+    "typescript": "^4.3.5"
+  }
+}
