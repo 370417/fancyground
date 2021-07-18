@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Fancyground",
-    "version": "0.9.0",
+    "version": "0.9.1",
     "description": "Custom arrows and square highlights for lichess.org.",
     "author": "Albert Ford",
     "homepage_url": "https://github.com/370417/fancyground",

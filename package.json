@@ -1,8 +1,11 @@
 {
   "name": "fancyground",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Custom arrows and square highlights for lichess.org.",
-  "keywords": ["chess", "lichess"],
+  "keywords": [
+    "chess",
+    "lichess"
+  ],
   "browser": "index.ts",
   "scripts": {
     "build": "tsc; rollup -c; rm -r js"
