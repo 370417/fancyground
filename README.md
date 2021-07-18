@@ -31,8 +31,8 @@ npm install
 npm run build
 ```
 
-Generated javascript will be in the `./bundled/` folder.
-HTML and CSS is in `./static/`.
+Generated javascript will be in the `bundled/` folder.
+HTML and CSS is in `static/`.
 
 Versions used:
 - npm: 7.4.3
@@ -41,7 +41,7 @@ Versions used:
 ### Zipping
 
 The chrome branch strips Firefox-specific features from the manifest and uses manifest version 3 instead of 2.
-To create the zip archive, delete everything except `.git/`, `bundled/`, `static/`, `icons/`, and `manifest.json`. The run the following command:
+To package the extension, run the following command:
 
 ```bash
 zip -r -X -FS "fancyground.zip" bundled static icons manifest.json
