@@ -1,14 +1,12 @@
-![Fancyground icon](icons/icon@128.png)
-
-# Fancyground
+![Fancyground logo](images/promo.png)
 
 Fancyground is a browser extension that changes the appearance of arrows and circles on lichess.org.
-
-![Fancyground vs stock Lichess comparison](images/comparison.png)
 
 - Highlight entire squares instead of drawing circles
 - Customize arrow and highlight colors
 - Arrows no longer cover the pieces that they originate from
+
+![Fancyground vs stock Lichess comparison](images/comparison.png)
 
 ## Drawing arrows with different colors
 
