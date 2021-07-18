@@ -15,6 +15,9 @@ Stock Lichess on the left, Fancyground on the right:
 On Lichess, right click and drag to draw arrows.
 Hold shift and/or alt as you draw to change the arrow's color.
 
+With Firefox, use control instead of shift
+because shift right click forces the context menu to appear.
+
 ## Customizing arrow colors
 
 Fancyground uses [web colors](https://en.wikipedia.org/wiki/Web_colors).
