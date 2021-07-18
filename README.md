@@ -44,8 +44,10 @@ The chrome branch strips Firefox-specific features from the manifest and uses ma
 To package the extension, run the following command:
 
 ```bash
-zip -r -X -FS "fancyground.zip" bundled static icons manifest.json
+zip -r -X -FS "fancyground.zip" bundled static icons manifest.json -x "*.DS_Store"
 ```
+
+`-x .DS_Store` exists to deal with macOS's hidden files.
 
 ## License
 
