@@ -52,3 +52,5 @@ zip -r -X -FS "fancyground.zip" bundled static icons manifest.json
 The source code for Fancyground is licensed under [GNU GPLv3](LICENSE.txt) or any later version.
 
 The Fancyground icon is licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). It uses maestro chess pieces made by sadsnake1.
+
+The font used in the logo is Crimson Pro licenced under OFL-1.1. That doesn't require attribution, but it's getting some anyway.
