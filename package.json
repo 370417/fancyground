@@ -5,7 +5,7 @@
   "keywords": ["chess", "lichess"],
   "browser": "index.ts",
   "scripts": {
-    "build": "tsc; rollup -c"
+    "build": "tsc; rollup -c; rm -r js"
   },
   "author": "Albert Ford <albert@albertford.com>",
   "license": "GPL-3.0-or-later",
