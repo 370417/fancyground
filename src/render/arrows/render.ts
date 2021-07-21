@@ -1,0 +1,86 @@
+import { getColor, getOpacity } from '../../state';
+import { keyRegex, keyToXY } from '../common';
+import { createDefs, createMask, getCap } from './defs/render';
+
+export function updateArrows(shapes: Element, board: Element, prefix: string): void {
+    const svg = board.querySelector('svg') || createNewSvg(board);
+    svg.innerHTML = '';
+    svg.insertAdjacentElement('afterbegin', createDefs(prefix));
+    const arrows = shapes.getElementsByTagName('line');
+    const flip = !!board.closest('.orientation-black');
+    for (let i = 0; i < arrows.length; i++) {
+        const uci = getArrowUci(arrows[i]);
+        const color = arrows[i].getAttribute('stroke');
+        const coords = uciToCoords(uci, flip);
+        const maskId = createMask(uci.slice(0, 2), flip, prefix, board, svg);
+        const arrow = createArrow(shortenTip(coords), svg, getCap(prefix, color), color);
+        if (maskId) {
+            arrow.setAttributeNS(null, 'mask', `url(#${maskId})`);
+        }
+    }
+}
+
+function getArrowUci(arrow: Element): string | undefined {
+    const hash = arrow.getAttribute('cgHash');
+    if (!hash) return;
+    const keys = hash.match(keyRegex);
+    if (keys.length < 2) return;
+    return `${keys[0]}${keys[1]}`;
+}
+
+function createNewSvg(board: Element): SVGSVGElement {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.classList.add('fancyground-arrows');
+    svg.setAttribute('viewBox', '-0.5 -0.5 8 8');
+    board.insertAdjacentElement('beforeend', svg);
+    return svg;
+}
+
+function createArrow(coords: Coords, svg: Element, cap: string, lichessColor: string): SVGLineElement {
+    const arrow = document.createElementNS('http://www.w3.org/2000/svg','line');
+    const color = getColor('arrow', lichessColor);
+    const opacity = getOpacity('arrow', lichessColor);
+    arrow.setAttributeNS(null, 'x1', `${coords.x1}`);
+    arrow.setAttributeNS(null, 'y1', `${coords.y1}`);
+    arrow.setAttributeNS(null, 'x2', `${coords.x2}`);
+    arrow.setAttributeNS(null, 'y2', `${coords.y2}`);
+    arrow.setAttributeNS(null, 'marker-end', cap);
+    arrow.setAttributeNS(null, 'stroke', color);
+    arrow.setAttributeNS(null, 'opacity', `${opacity}`);
+    svg.insertAdjacentElement('beforeend', arrow);
+    return arrow;
+}
+
+type Coords = {
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+};
+
+function uciToCoords(uci: string, flip: boolean): Coords {
+    const { 'x': x1, 'y': y1 } = keyToXY(uci, flip);
+    const { 'x': x2, 'y': y2 } = keyToXY(uci.slice(2), flip);
+    return { x1, y1, x2, y2 };
+}
+
+/// Trim the tip of a coords object so that the arrow doesn't reach
+/// all the way to the center of the square. We do this so that multiple
+/// arrows pointing to the same square don't overlap in an ugly way.
+/// In regular chessground, the trim amount is half as much if an arrow
+/// points to a square that no other arrow points to. But here we choose
+/// to use this amount of trim for all arrows so that drawing new arrows
+/// can't shorten existing arrows.
+function shortenTip({ x1, y1, x2, y2 }: Coords): Coords {
+    // Treat coords as a vector from tail to tip
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const magnitude = Math.sqrt(dx * dx + dy * dy);
+    const scale = (magnitude - 160 / 512) / magnitude;
+    return {
+        x1,
+        y1,
+        x2: x1 + dx * scale,
+        y2: y1 + dy * scale,
+    };
+}
