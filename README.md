@@ -43,6 +43,8 @@ Versions used:
 - npm: 7.4.3
 - node: v15.7.0
 
+Optional: Madge (generating the module dependency graph) requires graphviz.
+
 ### Zipping
 
 The chrome branch strips Firefox-specific features from the manifest and uses manifest version 3 instead of 2.

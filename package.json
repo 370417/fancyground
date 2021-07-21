@@ -8,7 +8,8 @@
   ],
   "browser": "index.ts",
   "scripts": {
-    "build": "tsc; rollup -c; rm -r js"
+    "build": "tsc; rollup -c; rm -r js",
+    "madge": "madge --extensions ts --image src/dependency-graph.svg src"
   },
   "author": "Albert Ford <albert@albertford.com>",
   "license": "GPL-3.0-or-later",
@@ -22,6 +23,7 @@
     "@typescript-eslint/eslint-plugin": "^4.28.4",
     "@typescript-eslint/parser": "^4.28.4",
     "eslint": "^7.31.0",
+    "madge": "^5.0.1",
     "rollup": "^2.53.2",
     "typescript": "^4.3.5"
   }
