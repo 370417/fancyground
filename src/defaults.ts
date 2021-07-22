@@ -8,14 +8,14 @@ export type Defaults = {
 };
 
 export const defaults: Defaults = {
-    'arrow_color_1': '#15781BD8', // green
-    'arrow_color_2': '#C60B0BD8', // red
-    'arrow_color_3': '#0080C6D8', // blue
-    'arrow_color_4': '#FFC20ED8', // yellow
-    'square_color_1': '#E69000AA', // '#97233FAA',
-    'square_color_2': '#003088AA', // '#125740AA',
-    'square_color_3': '#990018AA', // '#773141AA',
-    'square_color_4': '#125740AA', // '#4F2683AA',
+    'arrow_color_1': '#15781B', // green
+    'arrow_color_2': '#C60B0B', // red
+    'arrow_color_3': '#0080C6', // blue
+    'arrow_color_4': '#FFC20E', // yellow
+    'square_color_1': '#E69000',
+    'square_color_2': '#003088',
+    'square_color_3': '#990018',
+    'square_color_4': '#125740',
 };
 
 export const lichessColors = [
