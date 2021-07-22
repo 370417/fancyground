@@ -1,4 +1,4 @@
-import { ColorName, defaults, getColorNum, Shape } from './defaults';
+import { ColorName, defaults, Num, Shape } from './defaults';
 
 const colors: {
     [K in ColorName]: string | [string, number]
@@ -12,18 +12,25 @@ export function initColors(newColors: { [s: string]: string }): void {
 }
 
 // Get the custom color that corresponds to the normal shape color on lichess
-export function getColor(shape: Shape, lichessColor: string): string {
-    const colorName: ColorName = `${shape}_color_${getColorNum(lichessColor)}`;
+export function getColor(shape: Shape, colorNum: Num): string {
+    const colorName: ColorName = `${shape}_color_${colorNum}`;
     const colorField = colors[colorName];
     if (typeof colorField === 'string') return colorField;
     else return colorField[0];
 }
 
-export function getOpacity(shape: Shape, lichessColor: string): number {
-    const colorName: ColorName = `${shape}_color_${getColorNum(lichessColor)}`;
+export function getOpacity(shape: Shape, colorNum: Num): number {
+    const colorName: ColorName = `${shape}_color_${colorNum}`;
     const colorField = colors[colorName];
     if (typeof colorField === 'string') return 1;
     else return colorField[1];
+}
+
+// Only updates the colors in memory.
+// Updating stored colors should be done elsewhere.
+export function setColor(shape: Shape, colorNum: Num, color: string): void {
+    const colorName: ColorName = `${shape}_color_${colorNum}`;
+    colors[colorName] = color;
 }
 
 // We can allow users to specify opacity using a transparent color instead of

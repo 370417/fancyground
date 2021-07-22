@@ -1,31 +1,32 @@
-import { getColorNum, lichessColors } from '../../../defaults';
+import { lichessColors, Num } from '../../../defaults';
 import { getColor } from '../../../state';
 import { keyToXY } from '../../common';
 
 export function createDefs(prefix: string): SVGDefsElement {
     const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-    lichessColors.forEach(lichessColor => {
-        const marker = createMarker(lichessColor, prefix);
+    for (let num = 1; num <= lichessColors.length; num++) {
+        const marker = createMarker(num as Num, prefix);
         defs.insertAdjacentElement('beforeend', marker);
-    });
+    }
     return defs;
 }
 
-export function capId(prefix: string, lichessColor: string): string {
-    return `${prefix}arrowhead${getColorNum(lichessColor)}`;
+export function capId(prefix: string, colorNum: Num): string {
+    return `${prefix}arrowhead${colorNum}`;
 }
 
-export function getCap(prefix: string, lichessColor: string): string {
-    return `url(#${capId(prefix, lichessColor)})`;
+export function getCap(prefix: string, colorNum: Num): string {
+    return `url(#${capId(prefix, colorNum)})`;
 }
 
-function createMarker(lichessColor: string, prefix: string): SVGMarkerElement {
+function createMarker(colorNum: Num, prefix: string): SVGMarkerElement {
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     path.setAttributeNS(null, 'd', 'M0,0 V4 L3,2 Z');
-    path.setAttributeNS(null, 'fill', getColor('arrow', lichessColor));
+    path.setAttributeNS(null, 'fill', getColor('arrow', colorNum));
+    path.dataset.colorNum = `${colorNum}`;
 
     const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
-    marker.setAttributeNS(null, 'id', capId(prefix, lichessColor));
+    marker.setAttributeNS(null, 'id', capId(prefix, colorNum));
     marker.setAttributeNS(null, 'orient', 'auto');
     marker.setAttributeNS(null, 'markerWidth', '4');
     marker.setAttributeNS(null, 'markerHeight', '8');

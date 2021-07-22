@@ -1,3 +1,4 @@
+import { getColorNum, Num } from '../../defaults';
 import { getColor, getOpacity } from '../../state';
 import {  keyRegex, keyToXY } from '../common';
 
@@ -12,6 +13,16 @@ export function updateHighlights(shapes: Element, board: Element): void {
         const color = circles[i].getAttribute('stroke');
         const translucent = circles[i].getAttribute('opacity') !== '1';
         createHighlight(key, highlightContainer, flip, color, translucent);
+    }
+}
+
+export function updateHighlightColor(board: Element, colorNum: Num, newColor: string): void {
+    const highlights = board.getElementsByTagName('highlight');
+    for (let i = 0; i < highlights.length; i++) {
+        const highlight = highlights[i] as HTMLElement;
+        if (highlight.dataset.colorNum === `${colorNum}`) {
+            highlight.style.background = newColor;
+        }
     }
 }
 
@@ -32,10 +43,11 @@ function getCircleKey(circle: Element): string | undefined {
 
 function createHighlight(key: string, board: Element, flip: boolean, lichessColor: string, translucent: boolean): HTMLElement {
     const highlight = document.createElement('highlight');
-    const color = getColor('square', lichessColor);
-    let opacity = getOpacity('square', lichessColor);
+    const colorNum = getColorNum(lichessColor);
+    const color = getColor('square', colorNum);
+    let opacity = getOpacity('square', colorNum);
     if (translucent) opacity *= 0.25;
-    highlight.dataset.key = key;
+    highlight.dataset.colorNum = `${colorNum}`;
     highlight.style.background = color;
     highlight.style.opacity = `${opacity}`;
     highlight.style.transform = createTransform(key, flip);

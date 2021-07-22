@@ -1,3 +1,4 @@
+import { getColorNum, Num } from '../../defaults';
 import { getColor, getOpacity } from '../../state';
 import { keyRegex, keyToXY } from '../common';
 import { createDefs, createMask, getCap } from './defs/render';
@@ -11,11 +12,30 @@ export function updateArrows(shapes: Element, board: Element, prefix: string): v
     for (let i = 0; i < arrows.length; i++) {
         const uci = getArrowUci(arrows[i]);
         const color = arrows[i].getAttribute('stroke');
+        const colorNum = getColorNum(color);
         const coords = uciToCoords(uci, flip);
         const maskId = createMask(uci.slice(0, 2), flip, prefix, board, svg);
-        const arrow = createArrow(shortenTip(coords), svg, getCap(prefix, color), color);
+        const arrow = createArrow(shortenTip(coords), svg, getCap(prefix, colorNum), colorNum);
         if (maskId) {
             arrow.setAttributeNS(null, 'mask', `url(#${maskId})`);
+        }
+    }
+}
+
+export function updateArrowColor(board: Element, colorNum: Num, newColor: string): void {
+    const arrows = board.getElementsByTagNameNS('http://www.w3.org/2000/svg', 'line');
+    for (let i = 0; i < arrows.length; i++) {
+        const arrow = arrows[i];
+        if (arrow.dataset.colorNum === `${colorNum}`) {
+            arrow.setAttributeNS(null, 'stroke', newColor);
+        }
+    }
+    // arrow heads
+    const paths = board.getElementsByTagNameNS('http://www.w3.org/2000/svg', 'path');
+    for (let i = 0; i < paths.length; i++) {
+        const path = paths[i];
+        if (path.dataset.colorNum === `${colorNum}`) {
+            path.setAttributeNS(null, 'fill', newColor);
         }
     }
 }
@@ -36,10 +56,10 @@ function createNewSvg(board: Element): SVGSVGElement {
     return svg;
 }
 
-function createArrow(coords: Coords, svg: Element, cap: string, lichessColor: string): SVGLineElement {
+function createArrow(coords: Coords, svg: Element, cap: string, colorNum: Num): SVGLineElement {
     const arrow = document.createElementNS('http://www.w3.org/2000/svg','line');
-    const color = getColor('arrow', lichessColor);
-    const opacity = getOpacity('arrow', lichessColor);
+    const color = getColor('arrow', colorNum);
+    const opacity = getOpacity('arrow', colorNum);
     arrow.setAttributeNS(null, 'x1', `${coords.x1}`);
     arrow.setAttributeNS(null, 'y1', `${coords.y1}`);
     arrow.setAttributeNS(null, 'x2', `${coords.x2}`);
@@ -47,6 +67,7 @@ function createArrow(coords: Coords, svg: Element, cap: string, lichessColor: st
     arrow.setAttributeNS(null, 'marker-end', cap);
     arrow.setAttributeNS(null, 'stroke', color);
     arrow.setAttributeNS(null, 'opacity', `${opacity}`);
+    arrow.dataset.colorNum = `${colorNum}`;
     svg.insertAdjacentElement('beforeend', arrow);
     return arrow;
 }

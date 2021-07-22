@@ -1,5 +1,8 @@
-import { browser } from 'webextension-polyfill-ts';
+import { browser, Runtime } from 'webextension-polyfill-ts';
 import { defaults, ColorName } from './defaults';
+import { ColorMessage } from './message';
+
+let port: Runtime.Port | undefined;
 
 function saveColor(colorName: string, color: string) {
     browser.storage.sync.set({
@@ -32,12 +35,20 @@ function restoreColors() {
     }, console.error);
 }
 
+// Send updated color info to content scripts.
+// This is separate from saveColors because we want to call it more often.
+function sendColor(colorName: ColorName, color: string) {
+    const message: ColorMessage = { color, colorName };
+    port?.postMessage(message);
+}
+
 document.querySelectorAll('input').forEach(input => {
-    const colorName = input.closest('label').dataset.colorName;
+    const colorName = input.closest('label').dataset.colorName as ColorName;
     input.addEventListener('input', () => {
         if (CSS.supports('color', input.value)) {
             input.setCustomValidity('');
             if (!saveColors) return;
+            sendColor(colorName, input.value);
             saveColor(colorName, input.value);
         } else {
             input.setCustomValidity('Invalid color');
@@ -50,8 +61,19 @@ document.getElementsByTagName('button')[0].addEventListener('click', () => {
         const colorName = input.closest('label').dataset.colorName as ColorName;
         input.value = defaults[colorName];
         input.setCustomValidity('');
+        sendColor(colorName, input.value);
         saveColor(colorName, input.value);
     });
 });
 
 restoreColors();
+
+// Start sending updates to the current tab
+browser.tabs.query({
+    active: true,
+    currentWindow: true,
+}).then(tabs => {
+    if (tabs.length === 0) return;
+    port = browser.tabs.connect(tabs[0].id);
+    port.onDisconnect.addListener(() => port = undefined);
+}, console.error);

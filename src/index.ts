@@ -1,8 +1,9 @@
-import { browser } from 'webextension-polyfill-ts';
-import { defaults } from './defaults';
-import { updateArrows } from './render/arrows/render';
-import { updateHighlights } from './render/highlights/render';
-import { initColors } from './state';
+import { browser, Runtime } from 'webextension-polyfill-ts';
+import { defaults, Num } from './defaults';
+import { ColorMessage } from './message';
+import { updateArrowColor, updateArrows } from './render/arrows/render';
+import { updateHighlightColor, updateHighlights } from './render/highlights/render';
+import { initColors, setColor } from './state';
 
 // Init colors
 browser.storage.sync.get(defaults).then(initColors, console.error);
@@ -29,14 +30,24 @@ new MutationObserver(findNewChessgrounds).observe(document.body, {
     subtree: true,
 });
 
-const shapeCallback = (shapes: Element, board: Element, prefix: string): MutationCallback => (_, observer) => {
-    if (!document.body.contains(board)) {
-        observer.disconnect();
-        return;
-    }
-    updateHighlights(shapes, board);
-    updateArrows(shapes, board, prefix);
-};
+function shapeCallback(
+    shapes: Element,
+    board: Element,
+    prefix: string,
+    listener: PortListener,
+    openPorts: Set<Runtime.Port>,
+): MutationCallback {
+    return (_, observer) => {
+        if (!document.body.contains(board)) {
+            observer.disconnect();
+            openPorts.forEach(port => port.onMessage.removeListener(listener));
+            openPorts.clear();
+            return;
+        }
+        updateHighlights(shapes, board);
+        updateArrows(shapes, board, prefix);
+    };
+}
 
 let uniqueCounter = 0;
 
@@ -48,7 +59,21 @@ function watchChessground(cgContainer: Element) {
     const shapes = cgContainer.getElementsByClassName('cg-shapes');
     const board = cgContainer.getElementsByTagName('cg-board');
     if (!shapes.length || !board.length) return;
-    const callback = shapeCallback(shapes[0], board[0], prefix);
+
+    const openPorts = new Set<Runtime.Port>();
+
+    const listener = portListener(board[0]);
+    const callback = shapeCallback(shapes[0], board[0], prefix, listener, openPorts);
+
+    browser.runtime.onConnect.addListener(port => {
+        port.onMessage.addListener(listener);
+        openPorts.add(port);
+        port.onDisconnect.addListener(port => {
+            port.onMessage.removeListener(listener);
+            openPorts.delete(port);
+        });
+    });
+
     const observer = new MutationObserver(callback);
     observer.observe(shapes[0], {
         childList: true,
@@ -57,3 +82,19 @@ function watchChessground(cgContainer: Element) {
     callback([], observer);
 }
 
+type PortListener = (message: ColorMessage) => void;
+
+// Listen to color changes from options.html
+function portListener(board: Element): PortListener {
+    return (message: ColorMessage) => {
+        if (message.colorName.startsWith('square')) {
+            const colorNum = Number(message.colorName.slice(-1)) as Num;
+            setColor('square', colorNum, message.color);
+            updateHighlightColor(board, colorNum, message.color);
+        } else if (message.colorName.startsWith('arrow')) {
+            const colorNum = Number(message.colorName.slice(-1)) as Num;
+            setColor('arrow', colorNum, message.color);
+            updateArrowColor(board, colorNum, message.color);
+        }
+    };
+}
