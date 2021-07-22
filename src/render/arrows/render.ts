@@ -40,6 +40,22 @@ export function updateArrowColor(board: Element, colorNum: Num, newColor: string
     }
 }
 
+export function updateArrowColorAll(board: Element): void {
+    const arrows = board.getElementsByTagNameNS('http://www.w3.org/2000/svg', 'line');
+    for (let i = 0; i < arrows.length; i++) {
+        const arrow = arrows[i];
+        const colorNum = Number(arrow.dataset.colorNum) as Num;
+        arrow.setAttributeNS(null, 'stroke', getColor('arrow', colorNum));
+    }
+    // arrow heads
+    const paths = board.getElementsByTagNameNS('http://www.w3.org/2000/svg', 'path');
+    for (let i = 0; i < paths.length; i++) {
+        const path = paths[i];
+        const colorNum = Number(path.dataset.colorNum) as Num;
+        path.setAttributeNS(null, 'fill', getColor('arrow', colorNum));
+    }
+}
+
 function getArrowUci(arrow: Element): string | undefined {
     const hash = arrow.getAttribute('cgHash');
     if (!hash) return;

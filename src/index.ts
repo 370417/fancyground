@@ -1,8 +1,8 @@
 import { browser, Runtime } from 'webextension-polyfill-ts';
 import { defaults, Num } from './defaults';
 import { ColorMessage } from './message';
-import { updateArrowColor, updateArrows } from './render/arrows/render';
-import { updateHighlightColor, updateHighlights } from './render/highlights/render';
+import { updateArrowColor, updateArrowColorAll, updateArrows } from './render/arrows/render';
+import { updateHighlightColor, updateHighlightColorAll, updateHighlights } from './render/highlights/render';
 import { initColors, setColor } from './state';
 
 // Init colors
@@ -98,3 +98,17 @@ function portListener(board: Element): PortListener {
         }
     };
 }
+
+const boards = document.body.getElementsByTagName('cg-board');
+
+// Refresh colors on window focus in case colors have changed while this
+// page was in the background.
+window.addEventListener('focus', () => {
+    browser.storage.sync.get(defaults).then(newColors => {
+        initColors(newColors);
+        for (let i = 0; i < boards.length; i++) {
+            updateHighlightColorAll(boards[i]);
+            updateArrowColorAll(boards[i]);
+        }
+    }, console.error);
+});

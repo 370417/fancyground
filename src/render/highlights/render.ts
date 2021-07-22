@@ -1,6 +1,6 @@
 import { getColorNum, Num } from '../../defaults';
 import { getColor, getOpacity } from '../../state';
-import {  keyRegex, keyToXY } from '../common';
+import { keyRegex, keyToXY } from '../common';
 
 export function updateHighlights(shapes: Element, board: Element): void {
     const highlightContainer = board.querySelector('div.fancyground-highlights') || createNewHighlightContainer(board);
@@ -23,6 +23,15 @@ export function updateHighlightColor(board: Element, colorNum: Num, newColor: st
         if (highlight.dataset.colorNum === `${colorNum}`) {
             highlight.style.background = newColor;
         }
+    }
+}
+
+export function updateHighlightColorAll(board: Element): void {
+    const highlights = board.getElementsByTagName('highlight');
+    for (let i = 0; i < highlights.length; i++) {
+        const highlight = highlights[i] as HTMLElement;
+        const colorNum = Number(highlight.dataset.colorNum) as Num;
+        highlight.style.background = getColor('square', colorNum);
     }
 }
 
