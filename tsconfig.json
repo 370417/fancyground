@@ -4,7 +4,8 @@
         "lib": ["ES2018", "DOM"],
         "outDir": "js",
         "moduleResolution": "node",
-        "module": "es6"
+        "module": "es6",
+        "target": "ES5"
     },
     "include": ["src/"]
 }

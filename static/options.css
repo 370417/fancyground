@@ -1,0 +1,83 @@
+body {
+    --swatch: 22px;
+    --gutter: 17px;
+    --soft-border: #0003;
+    --hard-border: #000;
+    --inner-glow: #fffc;
+    width: calc(8 * var(--swatch) + 9 * var(--gutter));
+    margin: 0;
+}
+
+.row {
+    display: flex;
+    margin: var(--gutter) 0;
+}
+
+#canvas-wrapper {
+    position: relative;
+    margin: 0 var(--gutter);
+}
+
+#canvas-wrapper::after {
+    content: '';
+    display: block;
+    box-shadow: inset 0 0 0 1px var(--soft-border);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+canvas {
+    display: block;
+}
+
+#thumb {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 12px;
+    height: 12px;
+    border: 1px solid #000;
+    border-radius: 50%;
+    transform: translate(-7px, -7px);
+    z-index: 1;
+}
+
+#slider {
+    display: block;
+    width: var(--swatch);
+    height: 256px;
+    background: url('../images/rainbow.png');
+    position: relative;
+    box-shadow: inset 0 0 0 1px var(--soft-border);
+}
+
+#slider input {
+    display: none;
+}
+
+#slider svg {
+    position: absolute;
+    left: calc((var(--swatch) - 48px) / 2);
+    top: -12px;
+}
+
+#swatches div {
+    background: black;
+    width: var(--swatch);
+    height: var(--swatch);
+    margin-left: var(--gutter);
+    box-sizing: border-box;
+    border: 1px solid var(--soft-border);
+}
+
+#swatches div:hover {
+    border-color: var(--hard-border);
+}
+
+#swatches div.active {
+    border: 1px solid var(--hard-border);
+    box-shadow: inset 0 0 0 1px var(--inner-glow);
+}

@@ -1,38 +1,15 @@
 import { browser, Runtime } from 'webextension-polyfill-ts';
+import { Picker } from './options/color-picker';
 import { defaults, ColorName } from './defaults';
 import { ColorMessage } from './message';
+import { Swatches } from './options/swatches';
 
 let port: Runtime.Port | undefined;
 
-function saveColor(colorName: string, color: string) {
+function saveColor(colorName: ColorName, color: string) {
     browser.storage.sync.set({
         [colorName]: color,
-    }).then(() => {
-        const preview: HTMLElement = document.querySelector(`[data-color-name="${colorName}"] .color-preview`);
-        if (!preview) return;
-        preview.style.background = color;
-    }, console.error);
-}
-
-// Whether or not to call saveColor on input events.
-// This allows us to turn off saving temporarily so that the initial
-// restoreColors call does not waste a redundant write to storage.
-let saveColors = true;
-
-function restoreColors() {
-    browser.storage.sync.get(defaults).then(colors => {
-        saveColors = false;
-        for (const colorName in colors) {
-            const preview: HTMLElement = document.querySelector(`[data-color-name="${colorName}"] .color-preview`);
-            preview.style.background = colors[colorName];
-            
-            const input = document.querySelector(`[data-color-name="${colorName}"] input`) as HTMLInputElement;
-            if (input.value === '') {
-                input.value = colors[colorName];
-            }
-        }
-        saveColors = true;
-    }, console.error);
+    }).then(undefined, console.error);
 }
 
 // Send updated color info to content scripts.
@@ -42,28 +19,30 @@ function sendColor(colorName: ColorName, color: string) {
     port?.postMessage(message);
 }
 
-document.querySelectorAll('input').forEach(input => {
-    const colorName = input.closest('label').dataset.colorName as ColorName;
-    input.addEventListener('input', () => {
-        if (CSS.supports('color', input.value)) {
-            input.setCustomValidity('');
-            if (!saveColors) return;
-            sendColor(colorName, input.value);
-            saveColor(colorName, input.value);
-        } else {
-            input.setCustomValidity('Invalid color');
-        }
-    });
-});
+// document.querySelectorAll('input').forEach(input => {
+//     const colorName = input.closest('label').dataset.colorName as ColorName;
+//     input.addEventListener('input', () => {
+//         if (CSS.supports('color', input.value)) {
+//             input.setCustomValidity('');
+//             if (!saveColors) return;
+//             sendColor(colorName, input.value);
+//             saveColor(colorName, input.value);
+//         } else {
+//             input.setCustomValidity('Invalid color');
+//         }
+//     });
+// });
 
 document.getElementsByTagName('button')[0].addEventListener('click', () => {
-    document.querySelectorAll('input').forEach(input => {
-        const colorName = input.closest('label').dataset.colorName as ColorName;
-        input.value = defaults[colorName];
-        input.setCustomValidity('');
-        sendColor(colorName, input.value);
-        saveColor(colorName, input.value);
-    });
+    swatches.setColors(defaults);
+
+    // easy way to rerender picker
+    swatches.switchActiveColor(swatches.activeColorName, true);
+
+    for (const colorName in defaults) {
+        sendColor(colorName as ColorName, defaults[colorName as ColorName]);
+        saveColor(colorName as ColorName, defaults[colorName as ColorName]);
+    }
 });
 
 restoreColors();
@@ -77,3 +56,34 @@ browser.tabs.query({
     port = browser.tabs.connect(tabs[0].id);
     port.onDisconnect.addListener(() => port = undefined);
 }, console.error);
+
+const picker = new Picker(
+    document.getElementsByTagName('canvas')[0],
+    document.getElementById('thumb'),
+    document.getElementById('slider'),
+    document.querySelector('#slider svg'),
+);
+
+const swatches = new Swatches(
+    document.getElementById('swatches'),
+);
+
+picker.onRender = color => {
+    const colorName = swatches.setColor(color);
+    sendColor(colorName, color);
+};
+
+picker.saveColor = color => {
+    saveColor(swatches.activeColorName, color);
+};
+
+swatches.onSwitchActiveColor = (colorName: ColorName, color: string) => {
+    picker.setColorRgbStr(color);
+};
+
+function restoreColors() {
+    browser.storage.sync.get(defaults).then(colors => {
+        swatches.setColors(colors);
+        swatches.switchActiveColor('arrow_color_1', true);
+    }, console.error);
+}
