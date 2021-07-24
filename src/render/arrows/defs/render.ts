@@ -4,22 +4,22 @@ import { keyToXY } from '../../common';
 
 export function createDefs(prefix: string): SVGDefsElement {
     const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-    for (let num = 1; num <= lichessColors.length; num++) {
-        const marker = createMarker(num as Num, prefix);
+    for (let num = 0; num <= lichessColors.length; num++) {
+        const marker = createMarker(num as Num | 0, prefix);
         defs.insertAdjacentElement('beforeend', marker);
     }
     return defs;
 }
 
-export function capId(prefix: string, colorNum: Num): string {
+export function capId(prefix: string, colorNum: Num | 0): string {
     return `${prefix}arrowhead${colorNum}`;
 }
 
-export function getCap(prefix: string, colorNum: Num): string {
+export function getCap(prefix: string, colorNum: Num | 0): string {
     return `url(#${capId(prefix, colorNum)})`;
 }
 
-function createMarker(colorNum: Num, prefix: string): SVGMarkerElement {
+function createMarker(colorNum: Num | 0, prefix: string): SVGMarkerElement {
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     path.setAttributeNS(null, 'd', 'M0,0 V4 L3,2 Z');
     path.setAttributeNS(null, 'fill', getColor('arrow', colorNum));

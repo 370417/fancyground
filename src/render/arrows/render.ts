@@ -77,7 +77,7 @@ function createNewSvg(board: Element): SVGSVGElement {
     return svg;
 }
 
-function createArrow(coords: Coords, svg: Element, cap: string, colorNum: Num): SVGLineElement {
+function createArrow(coords: Coords, svg: Element, cap: string, colorNum: Num | 0): SVGLineElement {
     const arrow = document.createElementNS('http://www.w3.org/2000/svg','line');
     const color = getColor('arrow', colorNum);
     arrow.setAttributeNS(null, 'x1', `${coords.x1}`);

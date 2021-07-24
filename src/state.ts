@@ -16,7 +16,8 @@ export function initState(newState: Defaults): void {
 }
 
 // Get the custom color that corresponds to the normal shape color on lichess
-export function getColor(shape: Shape, colorNum: Num): string {
+export function getColor(shape: Shape, colorNum: Num | 0): string {
+    if (colorNum === 0) return '#4a4a4a'; // for gray arrows in analysis
     const colorName: ColorName = `${shape}_color_${colorNum}`;
     return state[colorName];
 }

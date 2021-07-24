@@ -29,8 +29,7 @@ export const lichessColors = [
     '#e68f00',
 ];
 
-export function getColorNum(lichessColor: string): Num {
+export function getColorNum(lichessColor: string): Num | 0 {
     const i = lichessColors.indexOf(lichessColor);
-    if (i < 0) return 1;
-    else return (i + 1) as Num;
+    return (i + 1) as Num;
 }
