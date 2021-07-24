@@ -65,7 +65,7 @@ canvas {
     display: block;
     width: var(--swatch);
     height: 256px;
-    background: url('../images/rainbow.png');
+    background: url('./rainbow.png');
     position: relative;
     box-shadow: inset 0 0 0 1px var(--soft-border);
 }
