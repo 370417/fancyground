@@ -63,6 +63,11 @@ browser.tabs.query({
     currentWindow: true,
 }).then(tabs => {
     if (tabs.length === 0) return;
+    // This will throw an exception in Chrome if the tab isn't lichess.org
+    // and can't respond to the connection.
+    // It's async, so try catch doesn't help. Checking the tab url would
+    // help, but I don't want to request the permimssion. I'd rather throw
+    // the exception.
     port = browser.tabs.connect(tabs[0].id);
     port.onDisconnect.addListener(() => port = undefined);
 }, console.error);
