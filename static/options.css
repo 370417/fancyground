@@ -10,6 +10,8 @@ body {
     background: var(--soft-bg);
     width: calc(8 * var(--swatch) + 9 * var(--gutter));
     margin: 0;
+    /* default is display: flex for some reason */
+    display: block;
 }
 
 @media (prefers-color-scheme: dark) {

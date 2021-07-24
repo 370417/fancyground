@@ -23,7 +23,6 @@
         }
     },
     "options_ui": {
-        "browser_style": true,
         "page": "static/options.html"
     },
     "page_action": {
