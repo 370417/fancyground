@@ -15,7 +15,13 @@ export function updateArrows(shapes: Element, board: Element, prefix: string): v
         const colorNum = getColorNum(color);
         const coords = uciToCoords(uci, flip);
         const maskId = createMask(uci.slice(0, 2), flip, prefix, board, svg);
-        const arrow = createArrow(shortenTip(coords), svg, getCap(prefix, colorNum), colorNum);
+        const arrow = createArrow(
+            shortenTip(coords),
+            svg,
+            getCap(prefix, colorNum),
+            colorNum,
+            arrows[i].getAttribute('opacity'),
+        );
         if (maskId) {
             arrow.setAttributeNS(null, 'mask', `url(#${maskId})`);
         }
@@ -77,7 +83,13 @@ function createNewSvg(board: Element): SVGSVGElement {
     return svg;
 }
 
-function createArrow(coords: Coords, svg: Element, cap: string, colorNum: Num | 0): SVGLineElement {
+function createArrow(
+    coords: Coords,
+    svg: Element,
+    cap: string,
+    colorNum: Num | 0,
+    originalOpacity: string,
+): SVGLineElement {
     const arrow = document.createElementNS('http://www.w3.org/2000/svg','line');
     const color = getColor('arrow', colorNum);
     arrow.setAttributeNS(null, 'x1', `${coords.x1}`);
@@ -86,6 +98,7 @@ function createArrow(coords: Coords, svg: Element, cap: string, colorNum: Num | 
     arrow.setAttributeNS(null, 'y2', `${coords.y2}`);
     arrow.setAttributeNS(null, 'marker-end', cap);
     arrow.setAttributeNS(null, 'stroke', color);
+    arrow.setAttributeNS(null, 'opacity', originalOpacity);
     arrow.dataset.colorNum = `${colorNum}`;
     svg.insertAdjacentElement('beforeend', arrow);
     return arrow;

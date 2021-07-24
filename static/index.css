@@ -18,6 +18,11 @@ cg-board svg line {
     stroke-width: 0.15625;
 }
 
+cg-board svg line[opacity="0.4"],
+cg-board svg line[opacity="0.35"] {
+    stroke-width: 0.234375;
+}
+
 highlight {
     position: absolute;
     top: 0;
