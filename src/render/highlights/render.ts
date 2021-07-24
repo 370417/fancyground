@@ -35,9 +35,15 @@ export function updateHighlightColorAll(board: Element): void {
     }
 }
 
+export function updateHighlightOpacity(board: Element): void {
+    const container = board.getElementsByClassName('fancyground-highlights')[0] as HTMLElement;
+    container.style.opacity = getOpacity('square');
+}
+
 function createNewHighlightContainer(board: Element): HTMLDivElement {
     const div = document.createElement('div');
     div.classList.add('fancyground-highlights');
+    div.style.opacity = getOpacity('square');
     board.insertAdjacentElement('beforeend', div);
     return div;
 }
@@ -54,11 +60,11 @@ function createHighlight(key: string, board: Element, flip: boolean, lichessColo
     const highlight = document.createElement('highlight');
     const colorNum = getColorNum(lichessColor);
     const color = getColor('square', colorNum);
-    let opacity = getOpacity('square', colorNum);
-    if (translucent) opacity *= 0.25;
+    let opacity = '1';
+    if (translucent) opacity = '0.25';
     highlight.dataset.colorNum = `${colorNum}`;
     highlight.style.background = color;
-    highlight.style.opacity = `${opacity}`;
+    highlight.style.opacity = opacity;
     highlight.style.transform = createTransform(key, flip);
     board.insertAdjacentElement('beforeend', highlight);
     return highlight;

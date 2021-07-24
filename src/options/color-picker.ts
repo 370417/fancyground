@@ -172,13 +172,11 @@ export class Picker {
         slider.addEventListener('mousedown', event => {
             draggingHue = true;
             readHueFromMouse(event);
-            event.preventDefault();
         });
 
         window.addEventListener('mousemove', event => {
             if (!draggingHue) return;
             readHueFromMouse(event);
-            event.preventDefault();
         });
 
         window.addEventListener('mouseup', () => {
@@ -207,13 +205,11 @@ export class Picker {
         canvas.parentElement.addEventListener('mousedown', event => {
             draggingSlice = true;
             readSVFromMouse(event);
-            event.preventDefault();
         });
 
         window.addEventListener('mousemove', event => {
             if (!draggingSlice) return;
             readSVFromMouse(event);
-            event.preventDefault();
         });
 
         window.addEventListener('mouseup', () => {

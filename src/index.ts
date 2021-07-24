@@ -1,12 +1,12 @@
 import { browser, Runtime } from 'webextension-polyfill-ts';
-import { defaults, Num } from './defaults';
-import { ColorMessage } from './message';
-import { updateArrowColor, updateArrowColorAll, updateArrows } from './render/arrows/render';
-import { updateHighlightColor, updateHighlightColorAll, updateHighlights } from './render/highlights/render';
-import { initColors, setColor } from './state';
+import { Defaults, defaults, Num } from './defaults';
+import { Message } from './message';
+import { updateArrowColor, updateArrowColorAll, updateArrowOpacity, updateArrows } from './render/arrows/render';
+import { updateHighlightColor, updateHighlightColorAll, updateHighlightOpacity, updateHighlights } from './render/highlights/render';
+import { initState, setColor, setOpacity } from './state';
 
 // Init colors
-browser.storage.sync.get(defaults).then(initColors, console.error);
+browser.storage.sync.get(defaults).then(initState, console.error);
 
 // Keep track of already-found chessground elements
 // without leaking memory (hopefully)
@@ -82,12 +82,19 @@ function watchChessground(cgContainer: Element) {
     callback([], observer);
 }
 
-type PortListener = (message: ColorMessage) => void;
+type PortListener = (message: Message) => void;
 
 // Listen to color changes from options.html
 function portListener(board: Element): PortListener {
-    return (message: ColorMessage) => {
-        if (message.colorName.startsWith('square')) {
+    return (message: Message) => {
+        if (message.property === 'opacity') {
+            setOpacity(message.shape, message.opacity);
+            if (message.shape === 'square') {
+                updateHighlightOpacity(board);
+            } else {
+                updateArrowOpacity(board);
+            }
+        } else if (message.colorName.startsWith('square')) {
             const colorNum = Number(message.colorName.slice(-1)) as Num;
             setColor('square', colorNum, message.color);
             updateHighlightColor(board, colorNum, message.color);
@@ -105,10 +112,12 @@ const boards = document.body.getElementsByTagName('cg-board');
 // page was in the background.
 window.addEventListener('focus', () => {
     browser.storage.sync.get(defaults).then(newColors => {
-        initColors(newColors);
+        initState(newColors as Defaults);
         for (let i = 0; i < boards.length; i++) {
             updateHighlightColorAll(boards[i]);
             updateArrowColorAll(boards[i]);
+            updateHighlightOpacity(boards[i]);
+            updateArrowOpacity(boards[i]);
         }
     }, console.error);
 });

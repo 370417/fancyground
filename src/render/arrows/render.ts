@@ -56,6 +56,10 @@ export function updateArrowColorAll(board: Element): void {
     }
 }
 
+export function updateArrowOpacity(board: Element): void {
+    board.getElementsByTagName('svg')[0].style.opacity = getOpacity('arrow');
+}
+
 function getArrowUci(arrow: Element): string | undefined {
     const hash = arrow.getAttribute('cgHash');
     if (!hash) return;
@@ -68,6 +72,7 @@ function createNewSvg(board: Element): SVGSVGElement {
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.classList.add('fancyground-arrows');
     svg.setAttribute('viewBox', '-0.5 -0.5 8 8');
+    svg.style.opacity = getOpacity('arrow');
     board.insertAdjacentElement('beforeend', svg);
     return svg;
 }
@@ -75,14 +80,12 @@ function createNewSvg(board: Element): SVGSVGElement {
 function createArrow(coords: Coords, svg: Element, cap: string, colorNum: Num): SVGLineElement {
     const arrow = document.createElementNS('http://www.w3.org/2000/svg','line');
     const color = getColor('arrow', colorNum);
-    const opacity = getOpacity('arrow', colorNum);
     arrow.setAttributeNS(null, 'x1', `${coords.x1}`);
     arrow.setAttributeNS(null, 'y1', `${coords.y1}`);
     arrow.setAttributeNS(null, 'x2', `${coords.x2}`);
     arrow.setAttributeNS(null, 'y2', `${coords.y2}`);
     arrow.setAttributeNS(null, 'marker-end', cap);
     arrow.setAttributeNS(null, 'stroke', color);
-    arrow.setAttributeNS(null, 'opacity', `${opacity}`);
     arrow.dataset.colorNum = `${colorNum}`;
     svg.insertAdjacentElement('beforeend', arrow);
     return arrow;

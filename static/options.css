@@ -4,8 +4,23 @@ body {
     --soft-border: #0003;
     --hard-border: #000;
     --inner-glow: #fffc;
+    --soft-bg: #eee;
+    --bg: #fff;
+    --fg: #111;
+    background: var(--soft-bg);
     width: calc(8 * var(--swatch) + 9 * var(--gutter));
     margin: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        --soft-border: #fff5;
+        --hard-border: #fff9;
+        --inner-glow: #000a;
+        --soft-bg: #1c1c1c;
+        --bg: #2a2a2a;
+        --fg: #ccc;
+    }
 }
 
 .row {
@@ -20,7 +35,6 @@ body {
 
 #canvas-wrapper::after {
     content: '';
-    display: block;
     box-shadow: inset 0 0 0 1px var(--soft-border);
     position: absolute;
     top: 0;
@@ -54,8 +68,8 @@ canvas {
     box-shadow: inset 0 0 0 1px var(--soft-border);
 }
 
-#slider input {
-    display: none;
+#slider path {
+    fill: var(--fg);
 }
 
 #slider svg {
@@ -65,19 +79,37 @@ canvas {
 }
 
 #swatches div {
-    background: black;
     width: var(--swatch);
     height: var(--swatch);
     margin-left: var(--gutter);
     box-sizing: border-box;
-    border: 1px solid var(--soft-border);
 }
 
 #swatches div:hover {
-    border-color: var(--hard-border);
+    border: 1px solid var(--hard-border);
 }
 
 #swatches div.active {
     border: 1px solid var(--hard-border);
     box-shadow: inset 0 0 0 1px var(--inner-glow);
+}
+
+input {
+    box-sizing: border-box;
+    height: var(--swatch);
+    border: 1px solid var(--soft-border);
+    background: var(--bg);
+    color: var(--fg);
+    padding: 0 5px;
+    margin: 0 0 0 var(--gutter);
+    font-size: 14px;
+    line-height: normal;
+}
+
+#color-input {
+    width: calc(6 * var(--swatch) + 5 * var(--gutter));
+}
+
+#opacity-input {
+    width: calc(2 * var(--swatch) + var(--gutter));
 }
