@@ -1,5 +1,5 @@
 {
-    "manifest_version": 2,
+    "manifest_version": 3,
     "name": "Fancyground",
     "version": "1.0.0",
     "description": "Custom arrows and square highlights for lichess.org.",
@@ -17,18 +17,12 @@
             "css": ["static/index.css"]
         }
     ],
-    "browser_specific_settings": {
-        "gecko": {
-            "id": "fancyground@albertford.com"
-        }
-    },
     "options_ui": {
         "page": "static/options.html"
     },
-    "page_action": {
+    "action": {
         "default_icon": "icons/icon@48.png",
         "default_popup": "static/options.html",
-        "default_title": "Fancyground",
-        "show_matches": ["https://lichess.org/*"]
+        "default_title": "Fancyground"
     }
 }
