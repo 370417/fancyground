@@ -8,6 +8,8 @@ Fancyground is a browser extension that changes the appearance of arrows and cir
 
 Fancyground is available at the **[Chome web store](https://chrome.google.com/webstore/detail/fancyground/emmjdpamcocnkljijkbdlihffabahgjd)** or at **[Firefox add-ons](https://addons.mozilla.org/en-US/firefox/addon/fancyground/)**.
 
+[Demo of it in action](https://i.imgur.com/XgDqV19.mp4)
+
 Stock Lichess on the left, Fancyground on the right:
 
 ![Fancyground vs stock Lichess comparison](images/comparison.png)
