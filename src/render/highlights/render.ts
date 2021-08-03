@@ -36,7 +36,9 @@ export function updateHighlightColorAll(board: Element): void {
 }
 
 export function updateHighlightOpacity(board: Element): void {
-    const container = board.getElementsByClassName('fancyground-highlights')[0] as HTMLElement;
+    const containers = board.getElementsByClassName('fancyground-highlights');
+    if (containers.length === 0) return;
+    const container = containers[0] as HTMLElement;
     container.style.opacity = getOpacity('square');
 }
 

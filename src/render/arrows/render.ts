@@ -63,7 +63,9 @@ export function updateArrowColorAll(board: Element): void {
 }
 
 export function updateArrowOpacity(board: Element): void {
-    board.getElementsByTagName('svg')[0].style.opacity = getOpacity('arrow');
+    const svgs = board.getElementsByTagName('svg');
+    if (svgs.length === 0) return;
+    svgs[0].style.opacity = getOpacity('arrow');
 }
 
 function getArrowUci(arrow: Element): string | undefined {
