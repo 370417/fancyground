@@ -21,6 +21,7 @@ export function updateArrows(shapes: Element, board: Element, prefix: string): v
             getCap(prefix, colorNum),
             colorNum,
             arrows[i].getAttribute('opacity'),
+            getArrowWidth(arrows[i]),
         );
         if (maskId) {
             arrow.setAttributeNS(null, 'mask', `url(#${maskId})`);
@@ -76,6 +77,16 @@ function getArrowUci(arrow: Element): string | undefined {
     return `${keys[0]}${keys[1]}`;
 }
 
+function getArrowWidth(arrow: Element): number | undefined {
+    const widthStr = arrow.getAttribute('stroke-width');
+    if (!widthStr) return;
+    const width = Number(widthStr);
+    if (Number.isNaN(width)) return;
+    // Unadjust chessground's current arrow effect
+    else if (width === 0.1328125) return 0.15625;
+    else return width;
+}
+
 function createNewSvg(board: Element): SVGSVGElement {
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.classList.add('fancyground-arrows');
@@ -91,6 +102,7 @@ function createArrow(
     cap: string,
     colorNum: Num | 0,
     originalOpacity: string,
+    width: number,
 ): SVGLineElement {
     const arrow = document.createElementNS('http://www.w3.org/2000/svg','line');
     const color = getColor('arrow', colorNum);
@@ -100,6 +112,7 @@ function createArrow(
     arrow.setAttributeNS(null, 'y2', `${coords.y2}`);
     arrow.setAttributeNS(null, 'marker-end', cap);
     arrow.setAttributeNS(null, 'stroke', color);
+    if (width) arrow.setAttributeNS(null, 'stroke-width', `${width}`);
     arrow.setAttributeNS(null, 'opacity', originalOpacity);
     arrow.dataset.colorNum = `${colorNum}`;
     svg.insertAdjacentElement('beforeend', arrow);
