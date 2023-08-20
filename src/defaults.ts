@@ -23,10 +23,10 @@ export const defaults: Defaults = {
 };
 
 export const lichessColors = [
-    '#15781B',
-    '#882020',
-    '#003088',
-    '#e68f00',
+    'green',
+    'red',
+    'blue',
+    'yellow',
 ];
 
 export function getColorNum(lichessColor: string): Num | 0 {

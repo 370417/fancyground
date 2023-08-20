@@ -1,17 +1,26 @@
 import { getColorNum, Num } from '../../defaults';
 import { getColor, getOpacity } from '../../state';
-import { keyRegex, keyToXY } from '../common';
+import { keyToXY } from '../common';
 
 export function updateHighlights(shapes: Element, board: Element): void {
     const highlightContainer = board.querySelector('div.fancyground-highlights') || createNewHighlightContainer(board);
     highlightContainer.innerHTML = '';
-    const circles = shapes.getElementsByTagName('circle');
+    const circles = shapes.querySelectorAll('g[cgHash]'); // also includes arrows which later get filtered out
     const flip = !!board.closest('.orientation-black');
     for (let i = 0; i < circles.length; i++) {
-        const key = getCircleKey(circles[i]);
-        if (!key) return;
-        const color = circles[i].getAttribute('stroke');
-        const translucent = circles[i].getAttribute('opacity') !== '1';
+        const circleElement = circles[i].querySelector('circle');
+        const cgHash = circles[i].getAttribute('cgHash');
+        // cgHash format for circles is number,number,square,color
+        // where square is algebraic like e4
+        // and color is yellow, red, blue, or green
+        // Except for circles which are actively being pressed down, in which case the
+        // format presumably is number,number,true,square,color
+        const cgHashParts = cgHash.split(',').filter(val => val != 'true');
+        // Filter out arrows (which should have a length of 5)
+        if (cgHashParts.length != 4) continue;
+        const key = cgHashParts[2];
+        const color = cgHashParts[3];
+        const translucent = circleElement.getAttribute('opacity') !== '1';
         createHighlight(key, highlightContainer, flip, color, translucent);
     }
 }
@@ -48,14 +57,6 @@ function createNewHighlightContainer(board: Element): HTMLDivElement {
     div.style.opacity = getOpacity('square');
     board.insertAdjacentElement('beforeend', div);
     return div;
-}
-
-function getCircleKey(circle: Element): string | undefined {
-    const hash = circle.getAttribute('cgHash');
-    if (!hash) return;
-    const key = hash.match(keyRegex);
-    if (key.length === 0) return;
-    return key[0];
 }
 
 function createHighlight(key: string, board: Element, flip: boolean, lichessColor: string, translucent: boolean): HTMLElement {

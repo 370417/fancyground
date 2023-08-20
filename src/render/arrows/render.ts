@@ -1,18 +1,27 @@
 import { getColorNum, Num } from '../../defaults';
 import { getColor, getOpacity } from '../../state';
-import { keyRegex, keyToXY } from '../common';
+import { keyToXY } from '../common';
 import { createDefs, createMask, getCap } from './defs/render';
 
 export function updateArrows(shapes: Element, board: Element, prefix: string): void {
     const svg = board.querySelector('svg') || createNewSvg(board);
     svg.innerHTML = '';
     svg.insertAdjacentElement('afterbegin', createDefs(prefix));
-    const arrows = shapes.getElementsByTagName('line');
+    const arrows = shapes.querySelectorAll('g[cgHash]'); // also includes circles which later get filtered out
     const flip = !!board.closest('.orientation-black');
     for (let i = 0; i < arrows.length; i++) {
-        const uci = getArrowUci(arrows[i]);
-        const color = arrows[i].getAttribute('stroke');
-        const colorNum = getColorNum(color);
+        const arrowElement = arrows[i].querySelector('line');
+        const cgHash = arrows[i].getAttribute('cgHash');
+        // cgHash format for arrows is number,number,square,square,color
+        // where square is algebraic like e4
+        // and color is yellow, red, blue, or green
+        // Except for arrows which are actively being dragged, in which case the
+        // format appears to be number,number,true,square,square,color
+        const cgHashParts = cgHash.split(',').filter(val => val != 'true');
+        // Filter out circles (which should have a length of 4)
+        if (cgHashParts.length != 5) continue;
+        const uci = cgHashParts[2] + cgHashParts[3];
+        const colorNum = getColorNum(cgHashParts[4]);
         const coords = uciToCoords(uci, flip);
         const maskId = createMask(uci.slice(0, 2), flip, prefix, board, svg);
         const arrow = createArrow(
@@ -20,8 +29,8 @@ export function updateArrows(shapes: Element, board: Element, prefix: string): v
             svg,
             getCap(prefix, colorNum),
             colorNum,
-            arrows[i].getAttribute('opacity'),
-            getArrowWidth(arrows[i]),
+            arrowElement.getAttribute('opacity'),
+            getArrowWidth(arrowElement),
         );
         if (maskId) {
             arrow.setAttributeNS(null, 'mask', `url(#${maskId})`);
@@ -67,14 +76,6 @@ export function updateArrowOpacity(board: Element): void {
     const svgs = board.getElementsByTagName('svg');
     if (svgs.length === 0) return;
     svgs[0].style.opacity = getOpacity('arrow');
-}
-
-function getArrowUci(arrow: Element): string | undefined {
-    const hash = arrow.getAttribute('cgHash');
-    if (!hash) return;
-    const keys = hash.match(keyRegex);
-    if (keys.length < 2) return;
-    return `${keys[0]}${keys[1]}`;
 }
 
 function getArrowWidth(arrow: Element): number | undefined {
