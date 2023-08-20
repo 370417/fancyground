@@ -8,7 +8,8 @@ export function updateHighlights(shapes: Element, board: Element): void {
     const circles = shapes.querySelectorAll('g[cgHash]'); // also includes arrows which later get filtered out
     const flip = !!board.closest('.orientation-black');
     for (let i = 0; i < circles.length; i++) {
-        const circleElement = circles[i].querySelector('circle');
+        const circleElement = circles[i].firstElementChild;
+        if (!circleElement || circleElement.tagName.toUpperCase() != 'CIRCLE') continue;
         const cgHash = circles[i].getAttribute('cgHash');
         // cgHash format for circles is number,number,square,color
         // where square is algebraic like e4

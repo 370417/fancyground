@@ -10,16 +10,17 @@ export function updateArrows(shapes: Element, board: Element, prefix: string): v
     const arrows = shapes.querySelectorAll('g[cgHash]'); // also includes circles which later get filtered out
     const flip = !!board.closest('.orientation-black');
     for (let i = 0; i < arrows.length; i++) {
-        const arrowElement = arrows[i].querySelector('line');
+        const arrowElement = arrows[i].firstElementChild;
+        if (!arrowElement || arrowElement.tagName.toUpperCase() != 'LINE') continue;
         const cgHash = arrows[i].getAttribute('cgHash');
         // cgHash format for arrows is number,number,square,square,color
         // where square is algebraic like e4
         // and color is yellow, red, blue, or green
         // Except for arrows which are actively being dragged, in which case the
         // format appears to be number,number,true,square,square,color
+        // And, when multiple arrows are pointing to the same square,
+        // cgHash has an additional ,- at the end
         const cgHashParts = cgHash.split(',').filter(val => val != 'true');
-        // Filter out circles (which should have a length of 4)
-        if (cgHashParts.length != 5) continue;
         const uci = cgHashParts[2] + cgHashParts[3];
         const colorNum = getColorNum(cgHashParts[4]);
         const coords = uciToCoords(uci, flip);
