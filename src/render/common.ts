@@ -9,5 +9,3 @@ export function keyToXY(key: string, flip: boolean): { x: number, y: number } {
     }
     return xy;
 }
-
-export const keyRegex = /[abcdefgh][12345678]/g;
