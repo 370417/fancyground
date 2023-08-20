@@ -58,7 +58,8 @@ export function createMask(key: string, flip: boolean, prefix: string, board: El
 /// Make sure to strip the url('...') because this is going into href="...", not into mask="...".
 function getPieceImageUrl(key: string, flip: boolean, board: Element): string | undefined {
     const width = board.getBoundingClientRect().width;
-    const piece: HTMLElement = board.querySelector(`piece[style="${createPxTransform(key, flip, width)}"]`);
+    const piece: HTMLElement = board.querySelector(`piece[style="${createPxTransformChrome(key, flip, width)}"]`)
+        || board.querySelector(`piece[style="${createPxTransformFirefox(key, flip, width)}"]`);
     if (!piece) return;
     const backgroundImage = getComputedStyle(piece).backgroundImage;
     const split = backgroundImage.split(/['"]/g);
@@ -109,7 +110,16 @@ function createImage(url: string, key: string, flip: boolean, prefix: string): S
     return image;
 }
 
-function createPxTransform(key: string, flip: boolean, boardSize: number): string {
+// Chrome always uses x and y coordinates even if y is 0.
+function createPxTransformChrome(key: string, flip: boolean, boardSize: number): string {
+    let { x, y } = keyToXY(key, flip);
+    x *= boardSize / 8;
+    y *= boardSize / 8;
+    return `transform: translate(${x}px, ${y}px);`;
+}
+
+// Firefox omits the y coordinate if it is 0.
+function createPxTransformFirefox(key: string, flip: boolean, boardSize: number): string {
     let { x, y } = keyToXY(key, flip);
     x *= boardSize / 8;
     y *= boardSize / 8;
