@@ -21,8 +21,8 @@ export function updateArrows(shapes: Element, board: Element, prefix: string): v
         // And, when multiple arrows are pointing to the same square,
         // cgHash has an additional ,- at the end
         const cgHashParts = cgHash.split(',').filter(val => val != 'true');
-        const uci = cgHashParts[2] + cgHashParts[3];
-        const colorNum = getColorNum(cgHashParts[4]);
+        const uci = cgHashParts[3] + cgHashParts[4];
+        const colorNum = getColorNum(cgHashParts[5]);
         const coords = uciToCoords(uci, flip);
         const maskId = createMask(uci.slice(0, 2), flip, prefix, board, svg);
         const arrow = createArrow(
